@@ -1,0 +1,11 @@
+sort1 uses: bubble sort
+
+How do you know?: I know because when the list is sorted, it takes less time due to the  Ω(n)
+
+sort2 uses: Merge sort
+
+How do you know?: Because Merge sort has a consistent O(n log n) time complexity, making it efficient for any input. In contrast, selection and bubble sorts have O(n^2) complexity in the worst case, causing slower performance, especially with reverse-sorted inputs due to their inherent nature.
+
+sort3 uses: Selection sort
+
+How do you know?: I know because when the list is sorted, it takes more  time than sort1 due to the  Ω(n^2)
