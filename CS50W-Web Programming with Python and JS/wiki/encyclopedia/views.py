@@ -83,7 +83,7 @@ def edit(request, name):
         if form.is_valid():
             edited_title = form.cleaned_data['title']
             edited_content = form.cleaned_data['content']
-            save_entry(name, edited_title, edited_content)
+            save_entry(edited_title, edited_content)
             entry_url = reverse("entry", kwargs={"name": edited_title})
             return redirect(entry_url)
     else:
