@@ -1,9 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .models import User,Listing,Category,Bid
 
@@ -108,3 +109,20 @@ def create(request):
     return render(request, "auctions/create.html", context)
 
 
+def listing(request,id):
+    listing = get_object_or_404(Listing,id=id)
+    return render(request, 'auctions/view.html', {'listing': listing})
+
+@login_required
+def bid(request, id):
+    if request.method == "POST":
+        new_bid = int(request.POST.get("new_bid"))
+    
+    bid_update = get_object_or_404(Bid, id=id)
+
+    if new_bid > bid_update.bid:
+        bid_update.bid = new_bid
+        bid_update.user = request.user
+        bid_update.save()
+        
+    return render(request, 'auctions/view.html', {'listing': bid_update.listing})
