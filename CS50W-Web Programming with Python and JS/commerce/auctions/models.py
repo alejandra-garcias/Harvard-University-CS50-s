@@ -13,7 +13,7 @@ class Category(models.Model):
     
 class Listing(models.Model):
     product = models.CharField(max_length=100)
-    picture_url = models.URLField(max_length=100000000,blank=True)
+    picture_url = models.URLField(max_length=100000000,blank=True,editable=False)
     description = models.CharField(max_length=1000,blank=True)
     watchlist = models.BooleanField(default=False)
     user = models.ForeignKey(User,on_delete=models.CASCADE,blank=False)

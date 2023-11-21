@@ -11,7 +11,7 @@
     <p>{{ bid.bid }}</p>
     {% endfor %}
     
-    
+    {% if user.is_authenticated %}
     {% for bid in listing.bid_set.all %}
     <form action="{% url 'bid' id=bid.id %}" method="POST">
         {% csrf_token %}
@@ -19,6 +19,7 @@
         <button type="submit">Puja!</button>
     </form>
 {% endfor %}
+{% endif %}
 
 
  

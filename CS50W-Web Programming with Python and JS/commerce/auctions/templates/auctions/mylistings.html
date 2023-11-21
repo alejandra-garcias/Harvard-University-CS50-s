@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+    <h2>My Listings</h2>
 
     <div  style="border: 1px solid black;">
     {% for listing in listings %}
@@ -15,15 +15,20 @@
         <p>{{ bid.bid }}</p>
         {% endfor %}
 
-        {% for listing in listings %}
+      
         {% if listing.is_active %}
             <p>Esta activo</p>
+            <form action="{% url 'close' id=listing.id %}" method="POST">
+                {% csrf_token %}
+                <input type="checkbox" name="is_active" value="False">
+                <button type="submit">Close</button>
+            </form>
         {% else %}
             {% for bid in listing.bids %}
             <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y gano</li>
             {% endfor %}
         {% endif %}
-        {% endfor %}
+      
     
 
 

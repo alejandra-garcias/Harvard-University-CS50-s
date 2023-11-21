@@ -126,3 +126,26 @@ def bid(request, id):
         bid_update.save()
         
     return render(request, 'auctions/view.html', {'listing': bid_update.listing})
+
+def categories(request):
+    categories = Category.objects.all()
+    return render(request,'auctions/categories.html',{'categories':categories})
+
+def category(request, category):
+    category_object = get_object_or_404(Category, category=category)
+    listings = Listing.objects.filter(category=category_object)
+    for listing in listings:
+        listing.bids = Bid.objects.filter(listing=listing)
+    return render(request, 'auctions/index.html', {'listings': listings})
+
+def mylistings(request):
+    listings = Listing.objects.filter(user=request.user)
+    return render(request, "auctions/mylistings.html",{'listings': listings})
+
+def close(request,id):
+    close_listing = get_object_or_404(Listing, id=id)
+    if request.method == "POST":
+        close_listing.is_active = False
+        close_listing.save()
+        return HttpResponseRedirect('/mylistings')
+    return render(request, 'auctions/close_listing.html', {'listing': close_listing})
