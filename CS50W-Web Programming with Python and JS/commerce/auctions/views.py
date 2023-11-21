@@ -163,12 +163,12 @@ def watchlist(request, user_id):
 def add_to_watchlist(request,id):
     listing = get_object_or_404(Listing, id=id)
     request.user.watchlist.add(listing)
-    return redirect('listing', id=id)
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 def remove_from_watchlist(request,id):
     listing = get_object_or_404(Listing, id=id)
     request.user.watchlist.remove(listing)
-    return redirect('listing', id=id)
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 def comment(request,id):
     if request.method == 'POST':

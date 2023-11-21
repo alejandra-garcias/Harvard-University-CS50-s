@@ -16,12 +16,30 @@
         {% endfor %}
 
         {% if listing.is_active %}
-            <p>Esta activo</p>
-        {% else %}
-            {% for bid in listing.bids %}
-            <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y gano</li>
-            {% endfor %}
-        {% endif %}
+        <p>Esta activo</p>
+        <form action="{% url 'close' id=listing.id %}" method="POST">
+            {% csrf_token %}
+            <input type="checkbox" name="is_active" value="False">
+            <button type="submit">Close</button>
+        </form>
+    {% else %}
+        {% for bid in listing.bids %}
+        <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y gano</li>
+        {% endfor %}
+    {% endif %}
+     <!-- Añadir o quitar de la lista de deseos -->
+     {% if listing in request.user.watchlist.all %}
+     <form action="{% url 'remove_from_watchlist' id=listing.id %}" method="post">
+         {% csrf_token %}
+         <button type="submit">Quitar de Watchlist</button>
+     </form>
+ {% else %}
+     <form action="{% url 'add_to_watchlist' id=listing.id %}" method="post">
+         {% csrf_token %}
+         <button type="submit">Añadir a Watchlist</button>
+     </form>
+ {% endif %}
+
       
     
 
