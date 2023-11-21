@@ -1,0 +1,27 @@
+
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+
+    <div style="border: 1px solid black;">
+        {% for listing in watchlist %}
+            <a href="{% url 'listing' id=listing.id %}">{{ listing.product }}</a>
+            <img src="{{ listing.picture_url }}"/>
+            {{ listing.description }}
+            {{ listing.category }}
+
+            {% for bid in listing.bid_set.all %}
+                <p>{{ bid.bid }}</p>
+            {% endfor %}
+
+            {% if listing.is_active %}
+                <p>Esta activo</p>
+            {% else %}
+                {% for bid in listing.bids.all %}
+                    <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y ganó</li>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

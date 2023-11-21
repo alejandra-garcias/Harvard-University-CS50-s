@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -140,12 +140,31 @@ def category(request, category):
 
 def mylistings(request):
     listings = Listing.objects.filter(user=request.user)
+    for listing in listings:
+        listing.bids = Bid.objects.filter(listing=listing)
     return render(request, "auctions/mylistings.html",{'listings': listings})
 
 def close(request,id):
     close_listing = get_object_or_404(Listing, id=id)
     if request.method == "POST":
-        close_listing.is_active = False
-        close_listing.save()
-        return HttpResponseRedirect('/mylistings')
+        if close_listing.user == request.user:
+            close_listing.is_active = False
+            close_listing.save()
+            return HttpResponseRedirect('/mylistings')
     return render(request, 'auctions/close_listing.html', {'listing': close_listing})
+
+def watchlist(request, user_id):
+    user= User.objects.get(id=user_id)
+    watchlist = user.watchlist.all()
+    return render(request, 'auctions/watchlist.html', {'watchlist': watchlist})
+
+def add_to_watchlist(request,id):
+    listing = get_object_or_404(Listing, id=id)
+    request.user.watchlist.add(listing)
+    return redirect('listing', id=id)
+
+def remove_from_watchlist(request,id):
+    listing = get_object_or_404(Listing, id=id)
+    request.user.watchlist.remove(listing)
+    return redirect('listing', id=id)
+

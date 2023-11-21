@@ -3,7 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+     watchlist = models.ManyToManyField('Listing', related_name='watchlist', blank=True)
 
 class Category(models.Model):
     category = models.CharField(max_length=100)
@@ -15,7 +15,6 @@ class Listing(models.Model):
     product = models.CharField(max_length=100)
     picture_url = models.URLField(max_length=100000000,blank=True,editable=False)
     description = models.CharField(max_length=1000,blank=True)
-    watchlist = models.BooleanField(default=False)
     user = models.ForeignKey(User,on_delete=models.CASCADE,blank=False)
     is_active = models.BooleanField(default=True)
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
