@@ -5,8 +5,8 @@ from django.shortcuts import render, get_object_or_404,redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
-from .models import User,Listing,Category,Bid
+from django.http import Http404
+from .models import User,Listing,Category,Bid,Comment
 
 
 def index(request):
@@ -115,11 +115,13 @@ def listing(request,id):
 
 @login_required
 def bid(request, id):
+    bid_update = get_object_or_404(Bid, id=id)
+    if not bid_update.listing.is_active:
+        raise Http404("This listing is already closed.")
+
     if request.method == "POST":
         new_bid = int(request.POST.get("new_bid"))
     
-    bid_update = get_object_or_404(Bid, id=id)
-
     if new_bid > bid_update.bid:
         bid_update.bid = new_bid
         bid_update.user = request.user
@@ -168,3 +170,16 @@ def remove_from_watchlist(request,id):
     request.user.watchlist.remove(listing)
     return redirect('listing', id=id)
 
+def comment(request,id):
+    if request.method == 'POST':
+        user = request.user
+        comment = request.POST.get('comment')
+        listing_id = request.POST.get('listing')
+    
+    listing = get_object_or_404(Listing, id=listing_id)
+    ## Creacion comentario:
+
+    new_comment = Comment(user=user,comments=comment,listing=listing)
+    new_comment.save()
+
+    return render(request, 'auctions/view.html', {'listing': listing})

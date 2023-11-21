@@ -15,7 +15,6 @@
         <p>{{ bid.bid }}</p>
         {% endfor %}
 
-        {% for listing in listings %}
         {% if listing.is_active %}
             <p>Esta activo</p>
         {% else %}
@@ -23,7 +22,7 @@
             <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y gano</li>
             {% endfor %}
         {% endif %}
-        {% endfor %}
+      
     
 
 

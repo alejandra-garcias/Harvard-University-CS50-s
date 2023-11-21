@@ -12,6 +12,8 @@
     {% endfor %}
     
     {% if user.is_authenticated %}
+    <!--Pujar-->
+    {% if bid.listing.is_active %}
     {% for bid in listing.bid_set.all %}
     <form action="{% url 'bid' id=bid.id %}" method="POST">
         {% csrf_token %}
@@ -19,11 +21,16 @@
         <button type="submit">Puja!</button>
     </form>
     {% endfor %}
+    {% endif %}
+
+    <!--anadir o quitar de wishlist-->
+
     {% if listing in request.user.watchlist.all %}
         <form action="{% url 'remove_from_watchlist' id=listing.id %}" method="post">
             {% csrf_token %}
             <button type="submit">Quitar de Watchlist</button>
         </form>
+    
     {% else %}
         <form action="{% url 'add_to_watchlist' id=listing.id %}" method="post">
             {% csrf_token %}
@@ -31,7 +38,23 @@
         </form>
     {% endif %}
 
+    <!--Comentar-->
+    <form action="{% url 'comment' id=listing.id %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="user">
+        <input type="hidden" name="listing" value="{{ listing.id }}">
+        <input type="textarea" name="comment" placeholder="Write your comment here">
+        
+        <button type="submit">Comment</button>
+    
+    </form>
+
+
     {% endif %}
+    <!--Renderizacion de comentarios-->
+    {% for comment in listing.comment_set.all %}
+            <li>{{ comment.user.username }}: {{ comment.comments }}</li>
+    {% endfor %}
 
 
  
