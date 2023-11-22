@@ -1,3 +1,12 @@
 textarea {
     min-height: 400px;
 }
+
+.emails-view{
+    gap: 10rem;
+}
+.email-preview{
+    border:1px solid rgb(155, 155, 241);
+    cursor: pointer;
+    padding: 1rem;
+}

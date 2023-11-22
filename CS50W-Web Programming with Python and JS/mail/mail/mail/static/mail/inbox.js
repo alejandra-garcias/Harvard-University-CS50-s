@@ -50,7 +50,6 @@ function compose_email() {
   
 
 function load_mailbox(mailbox) {
-  
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
@@ -60,28 +59,53 @@ function load_mailbox(mailbox) {
 
   // Display the mailbox
   fetch(`/emails/${mailbox}`)
-  .then(response => response.json())
-  .then(emails=>{
-    console.log(emails)
-    // Renderizacion de emails
-    if (emails.length > 0){
-      const element = document.createElement('div');
-      element.innerHTML = 'This is the content of the div.';
-      element.addEventListener('click', function() {
-      console.log('This element has been clicked!')
-      });
-      document.querySelector('#emails-view').append(element);
-      }
-    else{
-      const empty_element = document.createElement('div');
-      empty_element.innerHTML = 'No hay emails para mostrar';
-      empty_element.addEventListener('click', function() {
-        console.log('This empty element has been clicked!')
-        });
-        document.querySelector('#emails-view').append(empty_element);
-    }
-   
-  });
-  return false
+    .then(response => response.json())
+    .then(emails => {
+      const emailsView = document.querySelector('#emails-view');
+      emailsView.classList.add('emails-view');
 
+      if (emails.length > 0) {
+        emails.forEach(email => {
+          const emailDiv = document.createElement('div');
+          emailDiv.classList.add('email-preview');
+          emailDiv.innerHTML = `
+            <p>From: ${email.sender}</p>
+            <p>Subject: ${email.subject}</p>
+            <p>Body: ${email.body}</p>
+          `;
+
+          emailDiv.addEventListener('click', function() {
+            let email_id = email.id;
+            fetch(`/emails/${email_id}`)
+            .then(response => response.json())
+            .then (email =>{
+              // Clear the emailsView
+              emailsView.innerHTML = '';
+
+              const innerEmail = document.createElement('div');
+              innerEmail.classList.add('inner-email');
+              innerEmail.innerHTML=
+              `<p>From: ${email.sender}</p>
+              <p>Subject: ${email.subject}</p>
+              <p>Body: ${email.body}</p>`;
+              
+              emailsView.appendChild(innerEmail);
+
+            })
+            console.log('Aquí haré la lógica para entrar al mensaje!');
+          });
+
+          emailsView.appendChild(emailDiv);
+        });
+      } else {
+        const emptyElement = document.createElement('div');
+        emptyElement.innerHTML = 'No hay emails para mostrar';
+        emptyElement.addEventListener('click', function() {
+          console.log('This empty element has been clicked!');
+        });
+        emailsView.appendChild(emptyElement);
+      }
+    });
+
+  return false;
 }
