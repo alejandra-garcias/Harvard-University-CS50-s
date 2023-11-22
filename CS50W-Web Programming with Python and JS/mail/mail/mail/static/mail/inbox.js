@@ -74,12 +74,15 @@ function load_mailbox(mailbox) {
             <p>Body: ${email.body}</p>
           `;
 
+
+
           emailDiv.addEventListener('click', function() {
             let email_id = email.id;
             fetch(`/emails/${email_id}`)
             .then(response => response.json())
             .then (email =>{
               // Clear the emailsView
+              console.log(email)
               emailsView.innerHTML = '';
 
               const innerEmail = document.createElement('div');
@@ -89,10 +92,29 @@ function load_mailbox(mailbox) {
               <p>Subject: ${email.subject}</p>
               <p>Body: ${email.body}</p>`;
               
+
+              
               emailsView.appendChild(innerEmail);
 
+
+              
             })
-            console.log('Aquí haré la lógica para entrar al mensaje!');
+
+            if (email.read !== true){
+              fetch(`/emails/${email_id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    read: true
+                })
+              })
+            
+              console.log('Message marked as read')
+            }else{
+              console.log('The message was already read!');
+            }
+
+        
+            
           });
 
           emailsView.appendChild(emailDiv);

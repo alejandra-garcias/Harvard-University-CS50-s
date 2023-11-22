@@ -10,3 +10,7 @@ textarea {
     cursor: pointer;
     padding: 1rem;
 }
+
+.email-read{
+    background-color: rgb(151, 197, 186);
+}
