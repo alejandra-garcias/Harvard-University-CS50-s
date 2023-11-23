@@ -1,0 +1,43 @@
+textarea {
+    min-height: 400px;
+}
+span{
+    color: #6f7c72;
+}
+
+.emails-view{
+    gap: 10rem;
+}
+.email-preview{
+    border:1px solid rgb(59, 52, 52);
+    cursor: pointer;
+    padding: 1rem; 
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+   justify-content: space-evenly;
+   
+}
+.read-email{
+    border:1px solid rgb(59, 52, 52);
+    cursor: pointer;
+    padding: 1rem; 
+    background-color: rgb(215, 212, 212);
+    display: flex;
+    align-items: center;
+   justify-content: space-evenly;
+}
+.subject{
+    color: black;
+}
+.inner-email{
+    display:flex;
+
+    flex-direction: column;
+}
+.innerinner{
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid rgb(184, 182, 182);
+    margin-bottom: 10px;
+}
