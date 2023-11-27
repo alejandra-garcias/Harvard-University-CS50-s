@@ -1,6 +1,20 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+<script>
+    function exchangeCurrency() {
+        const host = 'api.frankfurter.app';
+        fetch(`https://${host}/latest?amount=100&from=EUR&to=USD`)
+        .then(resp => resp.json())
+        .then((data) => {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML=`<p>Exchange = ${data.rates.USD} USD</p>`;
+  });
+
+        return false;
+    }
+</script>
+
     <h2> {{listing.product}}</h2>
     <img src="{{listing.picture_url}}"/>
     {{listing.description}}
@@ -9,6 +23,20 @@
     <!-- Renderizado de la última bid -->
     {% for bid in listing.bid_set.all %}
         <p>{{ bid.bid }}</p>
+        <form id="exchange" onsubmit="return exchangeCurrency()">
+            <select id="currencies" name="currencies">
+              <option value="USD">Dólar estadounidense (USD)</option>
+              <option value="EUR">Euro (EUR)</option>
+              <option value="GBP">Libra esterlina (GBP)</option>
+              <option value="JPY">Yen japonés (JPY)</option>
+            </select>
+            <br>
+            <input type="submit" value="Change currency">
+          </form>
+        <div style="background-color: red; width: 50px;" id="result">
+EXCHANGE
+        </div>
+
     {% endfor %}
     
     {% if user.is_authenticated %}

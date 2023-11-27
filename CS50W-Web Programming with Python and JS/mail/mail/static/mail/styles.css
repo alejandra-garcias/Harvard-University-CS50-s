@@ -32,7 +32,6 @@ span{
 }
 .inner-email{
     display:flex;
-
     flex-direction: column;
 }
 .innerinner{
@@ -40,4 +39,20 @@ span{
     flex-direction: column;
     border-bottom: 1px solid rgb(184, 182, 182);
     margin-bottom: 10px;
+}
+
+.btn-reply{
+    border: none; 
+    color:#007bff; 
+    padding: 14px 28px; 
+    cursor: pointer; 
+    border-radius: 5px; 
+    background-color: white;
+    border: 1px solid #007bff;
+
+}
+
+.btn-reply:hover{
+    background-color: #007bff;
+    color: white;
 }

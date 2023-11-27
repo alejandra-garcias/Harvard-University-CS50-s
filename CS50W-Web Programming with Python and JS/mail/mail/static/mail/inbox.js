@@ -153,7 +153,7 @@ function display_email(emailDiv, email,emailsView){
     document.querySelector('#compose-subject').value =email.subject.slice(0,4) === "Re: "? email.subject : "Re: " + email.subject;
 
     //Creating reply body
-    const reply_body = `On ${email.timestamp} ${email.sender} wrote: \n \n`;
+    const reply_body = `\n\n\n On ${email.timestamp} ${email.sender} wrote: \n \n`;
 
     document.querySelector('#compose-body').value = reply_body + email.body
     
