@@ -119,15 +119,18 @@ def bid(request, id):
     if not bid_update.listing.is_active:
         raise Http404("This listing is already closed.")
 
+    new_bid = None  # Initialize new_bid outside the if statement
+    
     if request.method == "POST":
         new_bid = int(request.POST.get("new_bid"))
     
-    if new_bid > bid_update.bid:
-        bid_update.bid = new_bid
-        bid_update.user = request.user
-        bid_update.save()
+        if new_bid > bid_update.bid:
+            bid_update.bid = new_bid
+            bid_update.user = request.user
+            bid_update.save()
         
     return render(request, 'auctions/view.html', {'listing': bid_update.listing})
+
 
 def categories(request):
     categories = Category.objects.all()
