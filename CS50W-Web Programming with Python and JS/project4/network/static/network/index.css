@@ -1,0 +1,16 @@
+.tw-tweet{
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid rgb(231, 227, 227);
+    border-bottom:1px solid rgb(231, 227, 227);
+}
+.tw-container-pic{
+    margin:0.3rem
+}
+.tw-card-pic{
+    background-color: rgb(76, 191, 237);
+    border-radius: 50%;
+    width: 3.5rem;
+    height: 3.5rem;
+
+}

@@ -1,0 +1,14 @@
+@import 'index.css';
+
+body{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+nav{
+    width: 30%;
+}
+.body{
+    width: 70%;
+}

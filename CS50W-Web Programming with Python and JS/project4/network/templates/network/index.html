@@ -1,0 +1,36 @@
+{% extends "network/layout.html" %}
+{% block body %}
+<div class="tw-creation-form">
+    <form action="{% url 'tweet' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="body" placeholder="What's happening?">
+        <input type="submit">
+
+    </form>
+
+</div>
+{% for tweet in tweets %}
+<div class="tw-tweet">
+    <div class="tw-container-pic">
+        <div class="tw-card-pic">
+        </div>
+    </div>
+    <div>
+        <div>
+            <strong>{{tweet.user}}</strong>
+            <span>@{{tweet.user}}</span>
+            <small>{{tweet.created_at}}</small>
+        </div>
+        <div>
+            <p>{{tweet.body}}</p> 
+        </div>
+        <div>
+            <p>follows,like etc</p>
+        </div>
+       
+    </div>
+    
+</div>
+    
+{% endfor %}
+{% endblock %}
