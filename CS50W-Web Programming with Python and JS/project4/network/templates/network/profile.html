@@ -1,0 +1,70 @@
+{% extends "network/layout.html" %}
+{% block body %}
+<div>
+    <div>
+        <div>
+            cover picture
+        </div>
+        <div>
+            profile picture
+        </div>
+        <div>
+            {% if profile != request.user %}
+                {% if request.user.is_authenticated %}
+                    {% if profile != request.user %}
+                    {% if profile in request.user.get_following %}
+                    <form action="{% url 'unfollow' user_id=profile.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">
+                            ADIOS
+                        </button>
+                    </form>
+                {% elif profile not in request.user.get_following %}
+                    <form action="{% url 'follow' user_id=profile.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">HOLA</button>
+                    </form>
+                {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+        
+    </div>
+    <div>
+        <h3>{{profile.username}}</h3>
+        <span>@{{profile.username}}</span>
+        <p>{{profile.bio}}</p>
+        <p>{{profile.created_at}}</p>
+        <div>
+            <p>{{profile.followin}}following</p>
+            <p>{{profile.followers}}following</p>
+        </div>
+    </div>
+</div>
+{% for tweet in tweets %}
+<h2>Tweets</h2>
+<div class="tw-tweet">
+    <div class="tw-container-pic">
+        <div class="tw-card-pic">
+        </div>
+    </div>
+    <div>
+        <a href="#">
+            <strong>{{tweet.user}}</strong>
+            <span>@{{tweet.user}}</span>
+            <small>{{tweet.created_at}}</small>
+        </a>
+        <div>
+            <p>{{tweet.body}}</p> 
+        </div>
+        <div>
+            <p>follows,like etc</p>
+        </div>
+       
+    </div>
+    
+</div>
+    
+{% endfor %}
+{% endblock %}

@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404,redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
@@ -65,7 +65,6 @@ def register(request):
         return render(request, "network/register.html")
 
 @login_required
-
 def tweet(request):
 
     #Collecting from form
@@ -80,3 +79,42 @@ def tweet(request):
     return HttpResponseRedirect(reverse("index"))
 
 
+def profile(request,id):
+    profile = get_object_or_404(User, id=id)
+    tweets = Tweets.objects.filter(user=profile).order_by('-created_at')
+    return render(request, "network/profile.html",{'profile':profile,'tweets':tweets})
+
+def following(request, user_id):
+    user= User.objects.get(id=user_id)
+    following = User.objects.filter(followers__follower=user)
+    return render(request, 'auctions/following.html', {'following': following})
+
+def follow(request, user_id):
+    print(f"Follow view called for user_id={user_id}")
+    # Obtén el usuario al que se va a seguir
+    profile = get_object_or_404(User, id=user_id)
+
+    # Asegúrate de que el usuario no se siga a sí mismo
+    if request.user != profile:
+        # Verifica si ya está siguiendo al usuario
+        if not request.user.is_following(profile):
+            # Crea la relación de seguimiento
+            follow_instance = Follow.objects.create(follower=request.user, followed=profile)
+            follow_instance.save()
+
+    # Redirige de nuevo a la página desde la que vino
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+def unfollow(request, user_id):
+    print(f"Unfollow view called for user_id={user_id}")
+
+    profile = get_object_or_404(User, id=user_id)
+
+    if request.user.is_following(profile):
+        print("User is following. Deleting relationship.")
+        Follow.objects.filter(follower=request.user, followed=profile).delete()
+    else:
+        print("User is not following. Nothing to do.")
+
+    # Redirige de nuevo a la página desde la que vino
+    return redirect(request.META.get('HTTP_REFERER', '/'))

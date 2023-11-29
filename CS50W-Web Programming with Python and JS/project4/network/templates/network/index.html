@@ -16,11 +16,13 @@
         </div>
     </div>
     <div>
-        <div>
-            <strong>{{tweet.user}}</strong>
-            <span>@{{tweet.user}}</span>
-            <small>{{tweet.created_at}}</small>
-        </div>
+        {% if tweet.user %}
+            <a href="{% url 'profile' id=tweet.user.id %}">
+                <strong>{{ tweet.user }}</strong>
+                <span>@{{ tweet.user }}</span>
+                <small>{{ tweet.created_at }}</small>
+           </a>
+        {% endif %}
         <div>
             <p>{{tweet.body}}</p> 
         </div>

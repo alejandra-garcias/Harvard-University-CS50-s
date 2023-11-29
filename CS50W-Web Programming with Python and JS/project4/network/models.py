@@ -3,13 +3,24 @@ from django.db import models
 from datetime import datetime
 
 
+
+
 class User(AbstractUser):
-    
+    created_at = models.DateTimeField(default=datetime.now)
+    description =  models.TextField(blank=True)
+
     def is_following(self, other_user):
         return Follow.objects.filter(follower=self, followed=other_user).exists()
 
     def is_followed_by(self, other_user):
         return Follow.objects.filter(follower=other_user, followed=self).exists()
+    
+    def get_following(self):
+        return User.objects.filter(following__follower=self)
+
+    def get_followers(self):
+        return User.objects.filter(followers__followed=self)
+
 
 
 class Follow(models.Model):

@@ -12,3 +12,9 @@ nav{
 .body{
     width: 70%;
 }
+
+a{
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+}
