@@ -1,5 +1,6 @@
 {% extends "network/layout.html" %}
 {% block body %}
+{% load static %}
 <div class="tw-creation-form">
     <form action="{% url 'tweet' %}" method="POST">
         {% csrf_token %}

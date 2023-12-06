@@ -14,3 +14,7 @@
     height: 3.5rem;
 
 }
+.tw-follow-display{
+    display: flex;
+    gap: 1rem;
+}

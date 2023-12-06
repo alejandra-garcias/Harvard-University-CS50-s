@@ -1,5 +1,6 @@
 {% extends "network/layout.html" %}
 {% block body %}
+{% load static %}
 <div>
     <div>
         <div>
@@ -9,25 +10,26 @@
             profile picture
         </div>
         <div>
-            {% if profile != request.user %}
                 {% if request.user.is_authenticated %}
                     {% if profile != request.user %}
-                    {% if profile in request.user.get_following %}
-                    <form action="{% url 'unfollow' user_id=profile.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit">
-                            ADIOS
-                        </button>
-                    </form>
-                {% elif profile not in request.user.get_following %}
-                    <form action="{% url 'follow' user_id=profile.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit">HOLA</button>
-                    </form>
-                {% endif %}
+                        {% if isFollowing %}
+                        <form action="{% url 'unfollow' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="userfollow" value="{{ profile }}">
+                            <button type="submit">
+                                Unfollow
+                            </button>
+                        </form>
+                        {% else %}
+                        <form action="{% url 'follow' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="userfollow" value="{{ profile }}">
+                            <button type="submit">Follow</button>
+                        </form>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
-            {% endif %}
+            
         </div>
         
     </div>
@@ -36,14 +38,15 @@
         <span>@{{profile.username}}</span>
         <p>{{profile.bio}}</p>
         <p>{{profile.created_at}}</p>
-        <div>
-            <p>{{profile.followin}}following</p>
-            <p>{{profile.followers}}following</p>
+        <div class="tw-follow-display">
+            <p>{{following.count}}<span> Following</span></p>
+            <p>{{followers.count}}<span> Followers</span></p>
         </div>
     </div>
 </div>
-{% for tweet in tweets %}
 <h2>Tweets</h2>
+{% for tweet in tweets %}
+
 <div class="tw-tweet">
     <div class="tw-container-pic">
         <div class="tw-card-pic">

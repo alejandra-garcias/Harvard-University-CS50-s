@@ -82,39 +82,52 @@ def tweet(request):
 def profile(request,id):
     profile = get_object_or_404(User, id=id)
     tweets = Tweets.objects.filter(user=profile).order_by('-created_at')
-    return render(request, "network/profile.html",{'profile':profile,'tweets':tweets})
+    following = Follow.objects.filter(follower=profile)
+    followers = Follow.objects.filter(followed=profile)
 
-def following(request, user_id):
-    user= User.objects.get(id=user_id)
-    following = User.objects.filter(followers__follower=user)
-    return render(request, 'auctions/following.html', {'following': following})
+    #Check if request.user follows the current profile:
 
-def follow(request, user_id):
-    print(f"Follow view called for user_id={user_id}")
-    # Obtén el usuario al que se va a seguir
-    profile = get_object_or_404(User, id=user_id)
+    try:
+        checkFollow = followers.filter(follower=User.objects.get(pk=request.user.id))
+        if len(checkFollow)!=0:
+            isFollowing = True
+        else:
+            isFollowing = False
+    except:
+        isFollowing = False
 
-    # Asegúrate de que el usuario no se siga a sí mismo
-    if request.user != profile:
-        # Verifica si ya está siguiendo al usuario
-        if not request.user.is_following(profile):
-            # Crea la relación de seguimiento
-            follow_instance = Follow.objects.create(follower=request.user, followed=profile)
-            follow_instance.save()
+    return render(request, "network/profile.html",{
+        'profile':profile,
+        'tweets':tweets,
+        'following':following,
+        'followers':followers,
+        'isFollowing':isFollowing
+        })
 
+
+@login_required
+def following(request):
+    # Get the users that the current user is following
+    following_users = Follow.objects.filter(follower=request.user).values_list('followed', flat=True)
+
+    # Get the tweets from the following users
+    tweets = Tweets.objects.filter(user__in=following_users).order_by('-created_at')
+
+    return render(request, 'network/index.html', {'tweets': tweets})
+
+
+def follow(request):
+    userfollow = request.POST['userfollow']
+    userfollow = User.objects.get(username=userfollow)
+    to_follow = Follow(follower=request.user, followed=userfollow)
+    to_follow.save()
     # Redirige de nuevo a la página desde la que vino
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
-def unfollow(request, user_id):
-    print(f"Unfollow view called for user_id={user_id}")
-
-    profile = get_object_or_404(User, id=user_id)
-
-    if request.user.is_following(profile):
-        print("User is following. Deleting relationship.")
-        Follow.objects.filter(follower=request.user, followed=profile).delete()
-    else:
-        print("User is not following. Nothing to do.")
-
+def unfollow(request):
+    userfollow = request.POST['userfollow']
+    userfollow = User.objects.get(username=userfollow)
+    to_follow = Follow.objects.get(follower=request.user, followed=userfollow )
+    to_follow.delete()
     # Redirige de nuevo a la página desde la que vino
     return redirect(request.META.get('HTTP_REFERER', '/'))
