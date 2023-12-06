@@ -1,27 +1,56 @@
-
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
-    <h2>Watchlist</h2>
+<div class="layoutPages">
 
-    <div style="border: 1px solid black;">
-        {% for listing in watchlist %}
-            <a href="{% url 'listing' id=listing.id %}">{{ listing.product }}</a>
-            <img src="{{ listing.picture_url }}"/>
-            {{ listing.description }}
-            {{ listing.category }}
 
-            {% for bid in listing.bid_set.all %}
-                <p>{{ bid.bid }}</p>
-            {% endfor %}
+    <section>
 
-            {% if listing.is_active %}
-                <p>Esta activo</p>
-            {% else %}
-                {% for bid in listing.bids.all %}
-                    <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y ganó</li>
+        <div class="watchList">
+            <h1>Watchlist</h1>
+
+            <div class="cardsContainer">
+                {% csrf_token %}
+                {% for listing in watchlist %}
+
+                <article>
+                    <img src="{{ listing.picture_url }}"/>
+
+                    <div class="cardContent">
+                        <a href="{% url 'listing' id=listing.id %}">{{ listing.product }}</a>
+
+
+                        {{ listing.category }}
+
+                        {% for bid in listing.bid_set.all %}
+                        <p>{{ bid.bid }}</p>
+                        {% endfor %}
+
+                        {% if listing.is_active %}
+                        <span class="available">Available</span>
+                        {% else %}
+
+                        {% for bid in listing.bids.all %}
+                        <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y ganó</li>
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
                 {% endfor %}
-            {% endif %}
-        {% endfor %}
-    </div>
+            </div>
+
+
+        </div>
+    </section>
+
+
+    <section class="img_form">
+        <img src="{% static 'img/section.png' %}"/>
+    </section>
+</div>
 {% endblock %}
+

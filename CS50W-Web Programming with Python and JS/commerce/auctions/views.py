@@ -8,13 +8,11 @@ from django.contrib import messages
 from django.http import Http404
 from .models import User,Listing,Category,Bid,Comment
 
-
 def index(request):
     listings = Listing.objects.filter(is_active=True)
     categories = Category.objects.all()
 
     return render(request, "auctions/index.html", {'listings': listings, 'categories': categories})
-
 
 
 def login_view(request):
@@ -134,11 +132,10 @@ def bid(request, id):
     return render(request, 'auctions/view.html', {'listing': bid_update.listing})
 
 
-
 def category(request, category):
     categories = Category.objects.all()
     category_object = get_object_or_404(Category, category=category)
-    listings = Listing.objects.filter(category=category_object,is_active=True)
+    listings = Listing.objects.filter(category=category_object, is_active=True)
     for listing in listings:
         listing.bids = Bid.objects.filter(listing=listing)
     return render(request, 'auctions/index.html', {'listings': listings,"categories":categories})

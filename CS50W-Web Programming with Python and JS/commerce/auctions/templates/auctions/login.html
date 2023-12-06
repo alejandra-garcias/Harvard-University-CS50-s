@@ -1,24 +1,34 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
+<div class="layoutPages">
+    <section>
+        <h1>Login</h1>
 
-    <h2>Login</h2>
 
-    {% if message %}
+        {% if message %}
         <div>{{ message }}</div>
-    {% endif %}
+        {% endif %}
+        <form class="formInputs" action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <div class="contentForm">
+                <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+                <input class="form-control" type="password" name="password" placeholder="Password">
+            </div>
+            <input class="btnLoginRegister" type="submit" value="Login">
+        </form>
 
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <input autofocus class="form-control" type="text" name="username" placeholder="Username">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
-        </div>
-        <input class="btn btn-primary" type="submit" value="Login">
-    </form>
+        <span>
+        Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+        </span>
 
-    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+    </section>
 
+
+    <section class="img_form">
+        <img src="{% static 'img/login.png' %}"/>
+    </section>
+</div>
 {% endblock %}
+

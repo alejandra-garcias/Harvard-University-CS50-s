@@ -1,0 +1,43 @@
+nav {
+    width: 100%;
+    padding: 10px;
+    position: absolute;
+    z-index: 100;
+    transition: all 0.3s ease;
+
+    & ul {
+        display: flex;
+        list-style: none;
+
+        .nav-item {
+            margin: 0 10px;
+        }
+
+        .nav-left {
+            margin-left: auto;
+        }
+
+        .nav-registerLogin {
+            display: flex;
+
+            & a {
+                color: var(--blanco);
+                text-shadow: 1px 1px 1px var(--negro-oscuro);
+            }
+        }
+
+        & a {
+            text-decoration: none;
+        }
+    }
+
+}
+
+nav.scrolled {
+    position: fixed;
+    width: 100%;
+    background-color: var(--blanco);
+    border-bottom: 1px solid var(--dorado-claro);
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.06);
+
+}

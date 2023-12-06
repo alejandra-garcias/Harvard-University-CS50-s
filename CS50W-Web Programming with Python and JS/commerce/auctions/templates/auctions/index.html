@@ -1,55 +1,76 @@
 {% extends "auctions/layout.html" %}
-
+{% load static %}
 {% block body %}
-{% for category in categories %}
 
-<a href="{% url 'category' category=category %}">{{ category }}</a>
+<div class="home">
 
-{% endfor %}
-    <h2>Active Listings</h2>
+    <div class="home_img">
+        <img style="height: 30vh;" src="{% static 'img/background.png' %}"/>
 
-    <div  style="border: 1px solid black;">
-
-    {% for listing in listings %}
-       <a href="{% url 'listing' id=listing.id %}" >{{listing.product}}</a> 
-        <img src="{{listing.picture_url}}"/>
-        {{listing.description}}
-        {{listing.category}}
-
-        <!--Renderizado de la ultima bid-->
-        {% for bid in listing.bid_set.all %}
-        <p>{{ bid.bid }}</p>
-        {% endfor %}
-
-        {% if listing.is_active %}
-        <p>Esta activo</p>
-        <form action="{% url 'close' id=listing.id %}" method="POST">
-            {% csrf_token %}
-            <input type="checkbox" name="is_active" value="False">
-            <button type="submit">Close</button>
-        </form>
-    {% else %}
-        {% for bid in listing.bids %}
-        <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y gano</li>
-        {% endfor %}
-    {% endif %}
-     <!-- Añadir o quitar de la lista de deseos -->
-     {% if listing in request.user.watchlist.all %}
-     <form action="{% url 'remove_from_watchlist' id=listing.id %}" method="post">
-         {% csrf_token %}
-         <button type="submit">Quitar de Watchlist</button>
-     </form>
- {% else %}
-     <form action="{% url 'add_to_watchlist' id=listing.id %}" method="post">
-         {% csrf_token %}
-         <button type="submit">Añadir a Watchlist</button>
-     </form>
- {% endif %}
-
-      
-    
-
-
-    {% endfor %}
     </div>
+    <div class="containerCategories">
+        {% for category in categories %}
+
+
+        <a href="{% url 'category' category=category %}">
+            <div class="categoriesIcon">
+
+            </div>
+            <span>
+            {{ category }}
+            </span>
+        </a>
+
+        {% endfor %}
+    </div>
+
+
+    <section class="listCards">
+        {% for listing in listings %}
+        <article>
+            <img src="{{listing.picture_url}}"/>
+
+            <div class="cardContent">
+                <a href="{% url 'listing' id=listing.id %}">{{listing.product}}</a>
+
+                {% for bid in listing.bid_set.all %}
+                <p>$ {{ bid.bid }}</p>
+                {% endfor %}
+
+                {% if listing.is_active %}
+
+                {% else %}
+                {% for bid in listing.bids %}
+                <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y gano</li>
+                {% endfor %}
+
+                {% endif %}
+
+                <div class="cardFavorite">
+                    {% if listing in request.user.watchlist.all %}
+                    <form action="{% url 'remove_from_watchlist' id=listing.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit"><img src="{% static 'img/heart-point.svg' %}"/></button>
+
+                    </form>
+                    {% else %}
+                    <form action="{% url 'add_to_watchlist' id=listing.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit"><img src="{% static 'img/heart.svg' %}"/></button>
+                    </form>
+                </div>
+
+                {% endif %}
+            </div>
+
+
+        </article>
+
+        {% endfor %}
+
+
+    </section>
+
+</div>
+
 {% endblock %}

@@ -1,19 +1,37 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
-<form action="{% url 'create' %}" method="POST">
-    {% csrf_token %}
-    <input type="text" name="product" placeholder="product name">
-    <input type="text" name="picture_url" placeholder="image url">
-    <input type="text" name="description" placeholder="description">
-    <input type="number" name="bids" placeholder="min bid">
-    <select name="category">
-        {% for category in categories %}
-            <option value="{{ category.id }}">{{ category.category }}</option>
-        {% endfor %}
-    </select>
-    
-    <button type="submit">Submit</button>
+<div class="layoutPages">
 
-</form>
+    <section>
+        <h1>Create</h1>
+
+        <form class="formInputs" action="{% url 'create' %}" method="POST">
+
+            {% csrf_token %}
+            <div class="contentForm">
+                <input type="text" name="product" placeholder="product name">
+                <input type="text" name="picture_url" placeholder="image url">
+                <input type="text" name="description" placeholder="description">
+                <input type="number" name="bids" placeholder="min bid">
+                <select name="category">
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+            <button type="submit">Submit</button>
+
+        </form>
+    </section>
+
+
+    <section class="img_form">
+        <img src="{% static 'img/section.png' %}"/>
+    </section>
+</div>
+
 {% endblock %}

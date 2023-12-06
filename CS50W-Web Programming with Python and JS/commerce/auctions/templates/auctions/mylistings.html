@@ -1,37 +1,50 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
-    <h2>My Listings</h2>
+<div class="layoutPages">
+    <section>
+        <div class="listing">
+            <h1>My Listings</h1>
 
-    <div  style="border: 1px solid black;">
-    {% for listing in listings %}
-       <a href="{% url 'listing' id=listing.id %}" >{{listing.product}}</a> 
-        <img src="{{listing.picture_url}}"/>
-        {{listing.description}}
-        {{listing.category}}
+            <div class="cardsContainer">
+                {% for listing in listings %}
+                <article>
+                    <img src="{{listing.picture_url}}"/>
+                    <div class="cardContent">
+                        <a href="{% url 'listing' id=listing.id %}">{{listing.product}}</a>
 
-        <!--Renderizado de la ultima bid-->
-        {% for bid in listing.bid_set.all %}
-        <p>{{ bid.bid }}</p>
-        {% endfor %}
+                        {{ listing.category }}
 
-      
-        {% if listing.is_active %}
-            <p>Esta activo</p>
-            <form action="{% url 'close' id=listing.id %}" method="POST">
-                {% csrf_token %}
-                <input type="checkbox" name="is_active" value="False">
-                <button type="submit">Close</button>
-            </form>
-        {% else %}
-            {% for bid in listing.bids %}
-            <li>{{ bid.user.username }} ofreció ${{ bid.bid }} y gano</li>
-            {% endfor %}
-        {% endif %}
-      
-    
+                        {% for bid in listing.bid_set.all %}
+                        <p>{{ bid.bid }}</p>
+                        {% endfor %}
+
+                        {% if listing.is_active %}
+                        <span class="available">Available</span>
+                        <form class="btn_card" action="{% url 'close' id=listing.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit">Close</button>
+                        </form>
+                        {% else %}
+
+                        {% for bid in listing.bids.all %}
+                        <span class="resume">{{ bid.user.username }} ofreció ${{ bid.bid }} y ganó</span>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <section class="img_form">
+
+        <img src="{% static 'img/section.png' %}"/>
+
+    </section>
+</div>
 
 
-    {% endfor %}
-    </div>
 {% endblock %}

@@ -1,84 +1,129 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
 <script>
     function exchangeCurrency(bidAmount) {
-    const intBidAmount = parseInt(bidAmount, 10);
-    const selectedCurrency = document.getElementById('currencies').value;
-    const host = 'api.frankfurter.app';
+        const intBidAmount = parseInt(bidAmount, 10);
+        const selectedCurrency = document.getElementById('currencies').value;
+        const host = 'api.frankfurter.app';
 
-    fetch(`https://${host}/latest?amount=${intBidAmount}&from=EUR&to=${selectedCurrency}`)
-        .then(resp => resp.json())
-        .then((data) => {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `<p>Exchange = ${data.rates[selectedCurrency]} ${selectedCurrency}</p>`;
-        });
+        fetch(`https://${host}/latest?amount=${intBidAmount}&from=EUR&to=${selectedCurrency}`)
+            .then(resp => resp.json())
+            .then((data) => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<p>Exchange = ${data.rates[selectedCurrency]} ${selectedCurrency}</p>`;
+            });
 
-    return false;
-}
+        return false;
+    }
 
 </script>
 
-    <h2> {{listing.product}}</h2>
-    <img src="{{listing.picture_url}}"/>
-    {{listing.description}}
-    {{listing.category}}
+<div class="layoutPages">
+    <section class="details">
 
-    <!-- Renderizado de la última bid -->
-    {% for bid in listing.bid_set.all %}
-        <p>{{ bid.bid }}</p>
-        <form id="exchange" onsubmit="return exchangeCurrency('{{bid.bid}}')">
-            <select id="currencies" name="currencies">
-              <option value="USD">Dólar estadounidense (USD)</option>
-              <option value="GBP">Libra esterlina (GBP)</option>
-              <option value="JPY">Yen japonés (JPY)</option>
-            </select>
-            <br>
-            <input type="submit" value="Change currency">
-          </form>
-        <div style="background-color: red; width: 50px;" id="result">
-EXCHANGE
-        </div>
+        <article>
+            <img class="img_detail" src="{{listing.picture_url}}"/>
 
-    {% endfor %}
-    
-    {% if user.is_authenticated %}
-        <!-- Pujar -->
-        {% if listing.is_active %}
+            <h2> {{listing.product}}</h2>
+
+            <div class="detailInfo">
+                <p>
+                    {{listing.category}}
+
+                </p>
+                <p>
+                    {{listing.description}}
+                </p>
+
+                {% for bid in listing.bid_set.all %}
+                <div class="detailBid">
+                    <p class="detailBid">$ {{ bid.bid }}</p>
+                    <form id="exchange" onsubmit="return exchangeCurrency('{{bid.bid}}')">
+                        <select id="currencies" name="currencies">
+                            <option value="USD">Dólar estadounidense (USD)</option>
+                            <option value="GBP">Libra esterlina (GBP)</option>
+                            <option value="JPY">Yen japonés (JPY)</option>
+                        </select>
+                        <br>
+                        <input type="submit" value="Change currency">
+                    </form>
+                    <div class="resultBid" id="result">
+                    </div>
+                </div>
+
+
+                {% endfor %}
+            </div>
+
+
+            <!-- Renderizado de la última bid -->
+
+
+            {% if user.is_authenticated %}
+            <!-- Pujar -->
+            {% if listing.is_active %}
             {% for bid in listing.bid_set.all %}
-                <form action="{% url 'bid' id=bid.id %}" method="POST">
-                    {% csrf_token %}
-                    <input type="number" name="new_bid" placeholder="Recuerda que la nueva puja debe ser mayor que la última" min="{{ bid.bid }}">
-                    <button type="submit">Puja!</button>
-                </form>
+            <form class="inputPuja" action="{% url 'bid' id=bid.id %}" method="POST">
+                {% csrf_token %}
+                <input type="number" name="new_bid"
+                       placeholder="Recuerda que la nueva puja debe ser mayor que la última"
+                       min="{{ bid.bid }}">
+                <button type="submit">Puja!</button>
+            </form>
             {% endfor %}
+            {% endif %}
+
+
+            <!-- Añadir o quitar de la lista de deseos -->
+            <div class="cardFavorite">
+                {% if listing in request.user.watchlist.all %}
+                <form action="{% url 'remove_from_watchlist' id=listing.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit"><img src="{% static 'img/heart-point.svg' %}"/></button>
+
+                </form>
+                {% else %}
+                <form action="{% url 'add_to_watchlist' id=listing.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit"><img src="{% static 'img/heart.svg' %}"/></button>
+                </form>
+            </div>
+        </article>
+
         {% endif %}
 
-        <!-- Añadir o quitar de la lista de deseos -->
-        {% if listing in request.user.watchlist.all %}
-            <form action="{% url 'remove_from_watchlist' id=listing.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Quitar de Watchlist</button>
-            </form>
-        {% else %}
-            <form action="{% url 'add_to_watchlist' id=listing.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Añadir a Watchlist</button>
-            </form>
+
         {% endif %}
 
-        <!-- Comentar -->
-        <form action="{% url 'comment' id=listing.id %}" method="POST">
+
+    </section>
+    <section class="img_form">
+        <img src="{% static 'img/view.png' %}"/>
+        <div class="containerComments">
+            <ul>
+                {% for comment in listing.comment_set.all %}
+                <li>
+                    <h4>
+                        {{ comment.user.username }}
+                    </h4>
+                    <p>
+                        {{ comment.comments }}
+                    </p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <form class="sendComment" action="{% url 'comment' id=listing.id %}" method="POST">
             {% csrf_token %}
             <input type="hidden" name="user">
             <input type="hidden" name="listing" value="{{ listing.id }}">
             <input type="textarea" name="comment" placeholder="Write your comment here">
             <button type="submit">Comment</button>
         </form>
-    {% endif %}
-    
-    <!-- Renderización de comentarios -->
-    {% for comment in listing.comment_set.all %}
-        <li>{{ comment.user.username }}: {{ comment.comments }}</li>
-    {% endfor %}
+    </section>
+
+</div>
+
 {% endblock %}

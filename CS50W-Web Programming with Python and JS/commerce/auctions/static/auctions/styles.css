@@ -1,8 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600&display=swap');
+@import "layout.css";
+@import "nav.css";
+@import "home.css";
+@import "loginRegister.css";
+@import "watchlist.css";
+@import "listing.css";
+@import "details.css";
+
+
+:root {
+    --dorado: #cc9e54;
+    --dorado-oscuro: #9b7a40;
+    --dorado-claro: #f3ca8b;
+    --fondo: #eeeeee;
+    --blanco: #ffffff;
+    --negro: #1a1a1e;
+    --negro-oscuro: #05050c;
+}
+
+
+*::-webkit-scrollbar {
+    width: 1px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--dorado);
+    border-radius: 1px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+    scrollbar-width: auto;
+    scrollbar-color: var(--dorado) transparent;
+    overflow-x: hidden;
+}
+
+
+h1, h2, h3, h4, h5, h6, p, span, label, input, a, button, textarea {
+    color: var(--negro);
+    text-decoration: none;
+    overflow: hidden;
+}
+
 body {
-    padding: 10px;
+    background-color: var(--fondo);
 }
 
-img{
-    width: 10vw;
+/*Main*/
+main {
+    width: 100%;
 }
 
+
+button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
