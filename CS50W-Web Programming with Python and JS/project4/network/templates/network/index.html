@@ -1,6 +1,69 @@
 {% extends "network/layout.html" %}
 {% block body %}
 {% load static %}
+
+<script>
+    
+    function editTweet(id) {
+    const editedTweet = document.getElementById(`textarea_${id}`).value;
+    const content = document.getElementById(`content_${id}`);
+    const modal = document.getElementById(`modal_edit_tweet_${id}`);
+
+    fetch(`/edit/${id}`, {
+        method: "POST",
+        headers: {"Content-type":"application/json", "X-CSRFToken":"{{csrf_token}}"},
+        body: JSON.stringify({
+            content: editedTweet,
+        }),
+    })
+    .then(response => response.json())
+    .then(result => {
+        content.innerHTML = result.data;
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+        modal.setAttribute('style', 'display: none');
+        
+        // get modal backdrops
+        const modalsBackdrops = document.getElementsByClassName('modal-backdrop');
+
+
+        for(let i=0; i<modalsBackdrops.length; i++) {
+            document.body.removeChild(modalsBackdrops[i]);
+        }
+    });
+}
+
+
+
+    function liker(id, you_liked){
+        const btn = document.getElementById(id);
+        btn.innerHTML = ''
+        if(you_liked.indexOf(id) >= 0){
+            var liked = true;
+        }else{
+            var liked = false
+        }
+
+        if (liked === true){
+            fetch(`/unlike/${id}`)
+            .then(response =>response.json)
+            .then(result =>{
+                console.log(result)
+                btn.innerHTML = "♡" 
+            })
+        }else{
+            fetch(`/like/${id}`)
+            .then(response =>response.json)
+            .then(result =>{
+                console.log(result)
+                btn.innerHTML = "♥" 
+                
+            })
+
+        }
+        
+    }
+</script>
 <div class="tw-creation-form">
     <form action="{% url 'tweet' %}" method="POST">
         {% csrf_token %}
@@ -25,12 +88,43 @@
            </a>
         {% endif %}
         <div>
-            <p>{{tweet.body}}</p> 
+            <p id="body_{{tweet.id}}">{{tweet.body}}</p> 
+            {% if tweet.user == request.user %}
+                <button data-toggle = "modal" data-target="#modal_edit_tweet_{{tweet.id}}">✎</button>
+                <div><div class="modal fade" id="modal_edit_tweet_{{tweet.id}}" tabindex="-1" role="dialog" area-labelledby="modal_edit_tweet_{{tweet.id}}_label" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Edit Tweet</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <textarea id="textarea_{{tweet.id}}" class="form-control" name="content">{{tweet.body}}</textarea>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-primary"onclick="editTweet('{{tweet.id}}')">Save changes</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div></div>
+            {% endif %}
         </div>
-        <div>
-            <p>follows,like etc</p>
-        </div>
-       
+        {% if tweet.user != request.user %}
+            {% if tweet.id in you_liked %}
+            <div>
+                <button onclick="liker('{{tweet.id}}', '{{you_liked}}')" id="{{tweet.id}}">♥</button>
+            </div>
+            {% else %}
+            <div>
+                <button onclick="liker('{{tweet.id}}', '{{you_liked}}')" id="{{tweet.id}}">♡</button>
+
+
+            </div>
+            {% endif %}
+        {% endif %}
     </div>
     
 </div>

@@ -1,16 +1,50 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404,redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+import json
 
-from .models import User,Tweets,Follow
+from .models import User,Tweets,Follow,Like
 
+def unlike(request,tweet_id):
+    tweet = Tweets.objects.get(pk=tweet_id)
+    unlike = Like.objects.filter(user=request.user,tweet=tweet)
+    unlike.delete()
+    return JsonResponse({"message":"Unliked!"})
+
+def edit(request,tweet_id):
+    if request.method == "POST":
+        data =  json.loads(request.body)
+        edit_tweet = Tweets.objects.get(pk=tweet_id)
+        edit_tweet.body = data["content"]
+        edit_tweet.save()
+        return JsonResponse({"message": "Edited", "data":data["content"]})
+
+
+def like(request,tweet_id):
+    tweet = Tweets.objects.get(pk=tweet_id)
+    new_like = Like(user=request.user,tweet=tweet)
+    new_like.save()
+    return JsonResponse({"message":"Liked!"})
 
 def index(request):
     tweets = Tweets.objects.all().order_by('-created_at')
-    return render(request, "network/index.html",{'tweets':tweets})
+    all_likes = Like.objects.all()
+    you_liked = []
+    try:
+        for like in all_likes:
+            if like.user.id == request.user.id:
+                you_liked.append(like.tweet.id)
+    except:
+        you_liked = []
+
+    return render(request, "network/index.html",{'tweets':tweets,'you_liked':you_liked })
+
+   
+
+
 
 
 def login_view(request):
@@ -131,3 +165,4 @@ def unfollow(request):
     to_follow.delete()
     # Redirige de nuevo a la página desde la que vino
     return redirect(request.META.get('HTTP_REFERER', '/'))
+

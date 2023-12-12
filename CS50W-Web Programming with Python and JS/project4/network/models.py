@@ -28,3 +28,10 @@ class Tweets(models.Model):
     likes = models.IntegerField(default=0)
     def __str__(self):
         return self.body
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tweet = models.ForeignKey(Tweets, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user} liked {self.tweet}'
